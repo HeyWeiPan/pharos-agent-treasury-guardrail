@@ -1,0 +1,38 @@
+{
+  "policy": {
+    "agent_id": "demo-agent",
+    "chain_id": "688688",
+    "token_symbol": "PHRS",
+    "daily_limit": "100",
+    "per_tx_limit": "25",
+    "human_approval_threshold": "10",
+    "allowed_destinations": ["0x1111111111111111111111111111111111111111"],
+    "blocked_destinations": ["0xdead000000000000000000000000000000000000"],
+    "require_destination_screening": true,
+    "screening_block_level": "CRITICAL",
+    "screening_warn_level": "HIGH"
+  },
+  "spend_requests": [
+    {
+      "request_id": "req-demo-001",
+      "amount": "5",
+      "destination": "0x1111111111111111111111111111111111111111",
+      "purpose": "buy dataset access for analysis agent",
+      "expected_action": "approve"
+    },
+    {
+      "request_id": "req-demo-002",
+      "amount": "15",
+      "destination": "0x1111111111111111111111111111111111111111",
+      "purpose": "pay external research agent",
+      "expected_action": "needs_human_approval"
+    },
+    {
+      "request_id": "req-demo-003",
+      "amount": "1",
+      "destination": "0xdead000000000000000000000000000000000000",
+      "purpose": "suspicious transfer",
+      "expected_action": "block"
+    }
+  ]
+}
