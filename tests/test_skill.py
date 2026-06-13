@@ -15,7 +15,7 @@ def skill():
     guardrail.set_policy(
         GuardrailPolicy(
             agent_id="agent-1",
-            chain_id="688688",
+            chain_id="688689",
             token_symbol="PHRS",
             daily_limit=Decimal("100"),
             per_tx_limit=Decimal("25"),
@@ -33,7 +33,7 @@ def skill():
 def spend(amount, destination=ALLOWED, request_id="req-1"):
     return SpendRequest(
         agent_id="agent-1",
-        chain_id="688688",
+        chain_id="688689",
         token_symbol="PHRS",
         destination=destination,
         amount=Decimal(amount),
@@ -81,7 +81,7 @@ def test_warn_screening_escalates_to_human_approval():
     guardrail.set_policy(
         GuardrailPolicy(
             agent_id="agent-1",
-            chain_id="688688",
+            chain_id="688689",
             token_symbol="PHRS",
             daily_limit=Decimal("100"),
             per_tx_limit=Decimal("25"),
@@ -113,7 +113,7 @@ def test_policy_can_block_high_risk_destinations():
     guardrail.set_policy(
         GuardrailPolicy(
             agent_id="agent-1",
-            chain_id="688688",
+            chain_id="688689",
             token_symbol="PHRS",
             daily_limit=Decimal("100"),
             per_tx_limit=Decimal("25"),

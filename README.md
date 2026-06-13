@@ -53,7 +53,7 @@ Example policy:
 ```json
 {
   "agent_id": "research-agent",
-  "chain_id": "688688",
+  "chain_id": "688689",
   "token_symbol": "PHRS",
   "daily_limit": "100",
   "per_tx_limit": "25",

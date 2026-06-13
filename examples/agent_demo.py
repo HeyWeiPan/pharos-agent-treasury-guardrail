@@ -59,7 +59,7 @@ def main() -> None:
 def build_policy() -> GuardrailPolicy:
     return GuardrailPolicy(
         agent_id="demo-agent",
-        chain_id="688688",
+        chain_id="688689",
         token_symbol="PHRS",
         daily_limit=Decimal("100"),
         per_tx_limit=Decimal("25"),
@@ -75,7 +75,7 @@ def build_policy() -> GuardrailPolicy:
 def run_scenario(skill: GuardrailSkill, scenario: dict[str, str]) -> dict[str, Any]:
     request = SpendRequest(
         agent_id="demo-agent",
-        chain_id="688688",
+        chain_id="688689",
         token_symbol="PHRS",
         destination=scenario["destination"],
         amount=Decimal(scenario["amount"]),

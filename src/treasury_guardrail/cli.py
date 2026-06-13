@@ -14,7 +14,7 @@ def main() -> None:
     subcommands = parser.add_subparsers(dest="command", required=True)
 
     demo_parser = subcommands.add_parser("demo", help="Run the built-in demo scenario")
-    demo_parser.add_argument("--chain-id", default="688688")
+    demo_parser.add_argument("--chain-id", default="688689")
     demo_parser.add_argument("--token", default="PHRS")
 
     args = parser.parse_args()

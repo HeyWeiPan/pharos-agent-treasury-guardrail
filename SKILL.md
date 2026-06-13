@@ -20,7 +20,7 @@ Receipt and budget data are returned as structured objects so the caller decides
 
 ## Required Inputs
 - `agent_id`: policy owner.
-- `chain_id`: Pharos testnet is `688688`.
+- `chain_id`: Pharos testnet is `688689`.
 - `token_symbol`: token governed by the policy.
 - `destination`: payment destination.
 - `amount`: decimal string or exact decimal value.
