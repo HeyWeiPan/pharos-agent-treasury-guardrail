@@ -1,9 +1,22 @@
-# Pharos Agent Treasury Guardrail
+# Pharos Skill Engine Treasury Guardrail
 
-Reusable skill for agents that need to spend safely on Pharos.
+Reusable guardrail for agents that use the official
+`PharosNetwork/pharos-skill-engine` to spend safely on Pharos.
 
-The skill sits before payment, trading, or delegation agents and answers a simple question:
-can this agent spend this amount to this destination right now?
+The official Skill Engine provides the raw Pharos execution layer: balance
+queries, token queries, gas estimation, native transfers, ERC20 writes, contract
+write calls, deployment, verification, airdrops, and script generation through
+`cast` / `forge`.
+
+This skill sits in front of that execution layer and answers a different
+question:
+
+can this agent run the planned Skill Engine transaction right now?
+
+It is a policy gate, not a replacement for the Skill Engine command references.
+From the user's perspective, this skill should guide the agent to use the
+official Skill Engine automatically; the user should not need to manually tell
+the agent to run Skill Engine first.
 
 ## Phase 1 Scope
 
@@ -19,12 +32,34 @@ Optional differentiation layer:
 
 - `screen_destination`: plug in a shared risk memo verdict from a diligence engine. The policy maps risk levels to allow, warn, or block.
 
+## Pharos Skill Engine Integration
+
+This package depends on `PharosNetwork/pharos-skill-engine` as its execution
+layer. When an agent receives a Pharos payment or transaction request through
+this guardrail, it should automatically load or clone the official Skill Engine
+and then follow this sequence:
+
+1. Bootstrap the official Skill Engine if it is not already present:
+   `treasury-guardrail bootstrap-skill-engine`.
+2. Use Skill Engine `assets/networks.json` to resolve the target network.
+3. Use Skill Engine `assets/tokens.json` for known token symbols and addresses.
+4. Use Skill Engine `references/query.md` to check balances, token metadata, and contract state.
+5. Build a spend request for this guardrail.
+6. Call `approve_or_block`.
+7. If the decision is `approve`, continue to Skill Engine `references/transaction.md` for gas estimation and transaction sending.
+8. If the decision is `needs_human_approval`, stop and request human approval before sending.
+9. If the decision is `block`, do not send the transaction.
+10. After a successful Skill Engine transaction, call `record_receipt` and `summarize_budget`.
+
+See `references/treasury-guardrail.md` for the full agent workflow.
+
 ## Quick Start
 
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -e ".[dev]"
+treasury-guardrail bootstrap-skill-engine
 pytest
 treasury-guardrail demo
 ```
@@ -34,6 +69,10 @@ Without installing:
 ```bash
 PYTHONPATH=src python3 -m treasury_guardrail.cli demo
 ```
+
+The bootstrap command installs `PharosNetwork/pharos-skill-engine` into
+`vendor/pharos-skill-engine`, so users only install and invoke this guardrail
+skill.
 
 ## Demo Output
 
@@ -79,11 +118,11 @@ Example decision:
 
 ## Integration Notes
 
-The current implementation is dependency-light and in-memory so it can be wrapped by a specific hackathon skill schema later. Receipt and audit data are returned as structured objects; the package does not write audit files by itself.
+The current implementation is dependency-light and in-memory so it can be wrapped by the official Pharos Skill Engine flow. Receipt and audit data are returned as structured objects; the package does not write audit files by itself.
 
 Likely adapters:
 
+- Skill Engine pre-flight wrapper before `cast send` / contract write operations.
 - CLI wrapper for DoraHacks demo video.
-- MCP-style tool wrapper exposing the five primitives to an agent.
-- Pharos package/schema wrapper once requirements are known.
+- MCP-style tool wrapper exposing the guardrail primitives to an agent.
 - Destination screening adapter supplied by the shared RWA risk diligence core.

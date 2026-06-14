@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
 from .skill import GuardrailSkill, PolicyDestinationScreener
@@ -13,13 +15,46 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Agent Treasury Guardrail Skill demo CLI")
     subcommands = parser.add_subparsers(dest="command", required=True)
 
+    bootstrap_parser = subcommands.add_parser(
+        "bootstrap-skill-engine",
+        help="Install the official Pharos Skill Engine dependency",
+    )
+    bootstrap_parser.add_argument(
+        "--dest",
+        default="vendor/pharos-skill-engine",
+        help="Destination directory for PharosNetwork/pharos-skill-engine",
+    )
+
     demo_parser = subcommands.add_parser("demo", help="Run the built-in demo scenario")
     demo_parser.add_argument("--chain-id", default="688689")
     demo_parser.add_argument("--token", default="PHRS")
 
     args = parser.parse_args()
-    if args.command == "demo":
+    if args.command == "bootstrap-skill-engine":
+        print_json(bootstrap_skill_engine(Path(args.dest)))
+    elif args.command == "demo":
         print_json(run_demo(args.chain_id, args.token))
+
+
+def bootstrap_skill_engine(dest: Path) -> dict[str, str]:
+    repo = "https://github.com/PharosNetwork/pharos-skill-engine.git"
+    if dest.exists():
+        return {
+            "status": "already_installed",
+            "path": str(dest),
+            "repo": repo,
+        }
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["git", "clone", "--depth", "1", repo, str(dest)],
+        check=True,
+    )
+    return {
+        "status": "installed",
+        "path": str(dest),
+        "repo": repo,
+    }
 
 
 def run_demo(chain_id: str, token_symbol: str) -> Any:

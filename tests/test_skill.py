@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 
 from treasury_guardrail import DestinationScreening, GuardrailPolicy, GuardrailSkill, Receipt, SpendRequest
+from treasury_guardrail.cli import bootstrap_skill_engine
 
 
 ALLOWED = "0x1111111111111111111111111111111111111111"
@@ -188,3 +189,14 @@ def test_rejects_duplicate_receipt(skill):
 
     with pytest.raises(ValueError, match="receipt already recorded"):
         skill.record_receipt(receipt)
+
+
+def test_bootstrap_skill_engine_detects_existing_install(tmp_path):
+    dest = tmp_path / "vendor" / "pharos-skill-engine"
+    dest.mkdir(parents=True)
+
+    result = bootstrap_skill_engine(dest)
+
+    assert result["status"] == "already_installed"
+    assert result["path"] == str(dest)
+    assert result["repo"] == "https://github.com/PharosNetwork/pharos-skill-engine.git"
